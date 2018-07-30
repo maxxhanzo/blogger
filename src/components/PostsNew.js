@@ -1,13 +1,66 @@
 import React, { Component } from 'react';
+import { Field, reduxForm } from 'redux-form';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createPost } from '../actions';
 
-class PostNew extends Component {
-	render(){
+class PostsNew extends Component {
+	renderField(field){
 		return (
 			<div>
-				PostNew
+				<label>{field.label}</label>
+				<input
+					type="text" 
+					{...field.input}
+				/>
+				{field.meta.touched ? field.meta.error : ""}
 			</div>
+		)
+	}
+
+	onSubmit(values){
+		this.props.createPost(values, ()=>{
+			this.props.history.push("/");
+		});
+	}
+
+	render(){
+		const { handleSubmit } = this.props;
+
+		return (
+			<form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+				<Field
+					label="Title"
+					name="title"
+					component={this.renderField}
+				/>
+				<Field
+					label="Content"
+					name="content"
+					component={this.renderField}
+				/>
+				<button type="submit" className="btn">Submit</button>
+				<Link to="/" className="btn">cancel</Link>	
+			</form>
 		);
 	}
 }
 
-export default PostNew;
+
+function validate(values){
+	const errors = {};
+	if(!values.title){
+		errors.title = "Enter a title!";
+	}
+	if(!values.content){
+		errors.content = "Content field is empty!";
+	}
+	return errors;
+}
+
+export default reduxForm({
+	validate: validate,
+	form: "PostsNewForm"
+})(
+	connect(null, { createPost })(PostsNew)
+);
