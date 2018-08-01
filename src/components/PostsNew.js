@@ -6,11 +6,14 @@ import { createPost } from '../actions';
 
 class PostsNew extends Component {
 	renderField(field){
+		let classname;
+		if(field.label == "Content"){classname = "content"}else{classname=""}
 		return (
 			<div>
 				<label>{field.label}</label>
 				<input
-					type="text" 
+					className={classname}
+					type="text"
 					{...field.input}
 				/>
 				{field.meta.touched ? field.meta.error : ""}
@@ -40,7 +43,7 @@ class PostsNew extends Component {
 					component={this.renderField}
 				/>
 				<button type="submit" className="btn">Submit</button>
-				<Link to="/" className="btn">cancel</Link>	
+				<Link to="/" className="btn">cancel</Link>
 			</form>
 		);
 	}
