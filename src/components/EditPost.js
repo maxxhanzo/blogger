@@ -1,74 +1,43 @@
 import React, { Component } from 'react';
-import connect from 'react-redux';
-import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { editPost } from '../actions';
-
 
 class EditPost extends Component {
 
-	renderField(field){
+	
+	handleOnSubmit = (e) => {
+		e.preventDefault();
+
+		const { id } = this.props.match.params;
+		const title = this.title.value;
+		const content = this.content.value;
+		if(title == "" || content == ""){return false;}
+		this.props.editPost({title, content}, id, ()=>{
+			this.props.history.push("/");
+		})
+	}
+	render() {
+		const { post } = this.props;
+
+		if(!post){
+			return <div>Direct Access for editing not allowed...</div>
+		}
+
 		return (
 			<div>
-				<label>{field.label}</label>
-				<input
-					type="text"
-					{...field.input}
-				/>
-				{field.meta.touched ? field.meta.error : ""}
+				<form onSubmit={this.handleOnSubmit}>
+					<input type="text" className="form-field" id="title" ref={(element) => { this.title = element }} defaultValue={post.title} />
+					<textarea className="form-field" id="content" ref={(element) => { this.content = element }} defaultValue={post.content} />
+					<button  onClick={this.handleOnSubmit}>Submit</button>
+				</form>
 			</div>
 		)
 	}
-
-	onSubmit(values){
-
-		const { id } = this.props.match.params;
-		this.props.editPost(values, id, ()=>{
-			this.props.history.push("/");
-		});
-		console.log(values, id)
-	}
-
-	render(){
-		const { handleSubmit } = this.props;
-		const { id } = this.props.match.params;
-		console.log(id);
-
-		return (
-			<form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-				<Field
-					label="Title"
-					name="title"
-					component={this.renderField}
-				/>
-				<Field
-					label="Content"
-					name="content"
-					component={this.renderField}
-				/>
-				<button type="submit" className="btn">Submit</button>
-				<Link to="/" className="btn">cancel</Link>
-			</form>
-		)
-	}
 }
 
-
-function validate(values){
-	const errors = {};
-	if(!values.title){
-		errors.title = "Enter a title!";
-	}
-	if(!values.content){
-		errors.content = "Content field is empty!";
-	}
-	return errors;
+function mapStateToProps({ posts }, ownProps){
+	return { post: posts[ownProps.match.params.id]}
 }
 
-export default reduxForm({
-	validate: validate,
-	form: "editPostForm"
-})(
-	connect(null, { editPost })(EditPost)
-	EditPost
-);
+export default connect(mapStateToProps, { editPost })(EditPost);
+

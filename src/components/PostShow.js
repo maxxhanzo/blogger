@@ -30,7 +30,7 @@ class PostShow extends Component {
 					onClick={this.onDeleteClick.bind(this)}>
 					Delete
 				</button>
-				<Link to={`${this.props.match.url}/edit`}>Edit Post</Link>
+				<Link className="btn" to={`${this.props.match.url}/edit`}>Edit Post</Link>
 				<h3>{post.title}</h3>
 				<p>{post.content}</p>
 			</div>

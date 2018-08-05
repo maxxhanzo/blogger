@@ -12,11 +12,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('../style'))
 app.use(express.static('../dist'))
 
-// let todoSchema = new mongoose.Schema({
-//     todo: String,
-//     checked: Boolean,
-//     id: String
-// })
 
 let blogSchema = new mongoose.Schema({
     title: String,
@@ -26,10 +21,6 @@ blogSchema.plugin(AutoIncrement, {inc_field: 'id'});
 
 
 let Blog = mongoose.model("Blog", blogSchema);
-
-
-
-
 
 
 app.get("/api/posts", function(req, res){
@@ -77,10 +68,6 @@ app.delete("/api/posts/:id", function(req, res){
 });
 
 
-app.get("/*", function(req, res){
-	res.sendFile(path.resolve("index.html"));
-})
-
 app.put("/api/posts/:id", function(req, res){
 	let query = { id: req.params.id };
 	// console.log(req.body);
@@ -92,6 +79,10 @@ app.put("/api/posts/:id", function(req, res){
 	    };
 	    return res.status(200).send(response);
 	});
+})
+
+app.get("/*", function(req, res){
+	res.sendFile(path.resolve("index.html"));
 })
 
 app.listen(3000, function(){
